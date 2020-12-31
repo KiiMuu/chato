@@ -1,0 +1,24 @@
+// register
+@media screen and (max-width: 640px) {
+    .register {
+        &__image {
+            h1 {
+                font-size: 5rem;
+                letter-spacing: 0;
+            }
+            p {
+                letter-spacing: 0;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 390px) {
+    .register {
+        &__image {
+            h1 {
+                font-size: 3.8rem;
+            }
+        }
+    }
+}

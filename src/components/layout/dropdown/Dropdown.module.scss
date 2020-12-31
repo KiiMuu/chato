@@ -1,0 +1,45 @@
+.dropdown {
+    position: relative;
+    z-index: 2;
+    .dropdownTrigger {
+        font-size: 1.5rem;
+        &:active, &:focus {
+            border: none;
+            outline: none;
+        }
+        .dropdownTriggerIcon {
+            margin-left: .2rem;
+            font-size: 1.4rem;
+            vertical-align: middle;
+        }
+    }
+    .dropdownList {
+        position: absolute;
+        top: 3.5rem;
+        background-color: white;
+        padding: 1.5rem 0;
+        width: 100%;
+        box-shadow: 0 0 1rem 1rem rgba(0, 0, 0, .1);
+        .dropdownListItem {
+            font-size: 1.3rem;
+            padding: .7rem 2rem;
+            transition: margin-left .2s ease-in-out;
+            &:hover {
+                cursor: pointer;
+                margin-left: -.5rem;
+                background-color: rgba(0, 0, 0, .06);
+                transition: margin-left .2s ease-in-out;
+            }
+        }
+        // effect
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-2rem);
+        transition: all .15s ease-in-out;
+    }
+    .dropdownList.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}

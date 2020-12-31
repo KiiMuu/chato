@@ -1,0 +1,53 @@
+@import '../../../helpers/variables';
+
+.modal {
+    position: fixed;
+    background-color: rgba($color-black, .75);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+    z-index: 999;
+    .modalContent {
+        position: relative;
+        max-width: 50%;
+        margin: 5rem auto;
+        .closeBtn {
+            position: absolute;
+            right: 2rem;
+            top: 1.5rem;
+            font-size: $default-font-size;
+            opacity: .3;
+            background-color: rgba($color-grey-dark, .3);
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            &:active, &:focus {
+                border: none;
+                outline: none;
+            }
+        }
+    }
+    .modalContent.open {
+        animation: animateModal .25s ease-in-out;
+    }
+}
+
+@keyframes animateModal {
+    0% {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-5rem);
+    }
+    80% {
+        transform: translateY(1rem);
+    }
+    100% {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}

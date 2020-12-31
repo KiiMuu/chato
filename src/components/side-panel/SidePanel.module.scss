@@ -1,0 +1,149 @@
+@import '../../helpers/variables';
+@import '../../helpers/mixins';
+
+.sidepanel {
+    height: 100vh;
+    background-color: $color-primary-dark;
+    display: flex;
+    flex-direction: column;
+    // user panel component
+    .userpanelHeader {
+        text-align: center;
+        .userpanelHeaderName {
+            font-family: 'Lobster', cursive;
+            font-size: 3.5rem;
+            color: $color-grey-light;
+            text-transform: uppercase;
+            letter-spacing: .3rem;
+            margin-bottom: 1rem;
+        }
+    }
+    .userpanelDropdown {
+        position: relative;
+        background-color: rgba($color-grey-light, .15);
+        padding: 1rem 0;
+        z-index: 2;
+        .avatar {
+            position: absolute;
+            right: 1rem;
+            top: -.25rem;
+        }
+        .currentUsername {
+            position: absolute;
+            left: 1rem;
+            font-size: $default-font-size;
+        }
+    }
+    // channels component
+    .channels {
+        margin-top: 1.5rem;
+        .channelsLength {
+            position: relative;
+            span:first-child {
+                position: absolute;
+                left: 0;
+                font-size: $default-font-size;
+                color: $color-grey-light;
+            }
+            span:last-child {
+                position: absolute;
+                right: 0;
+                font-size: 1.4rem;
+                color: rgba($color-grey-light, .5);
+                cursor: pointer;
+                color: $color-green;
+                background-color: rgba($color-grey-light, .15);
+                padding: .2rem .8rem;
+                border-radius: .3rem;
+                z-index: 1;
+                transition: all .1s;
+                &:active {
+                    box-shadow: 0 .5rem 1rem rgba($color-black, .15);
+                    transform: translateY(.25rem);
+                }
+                .modalTrigger {
+                    font-size: 1.5rem;
+                    &:active, &:focus {
+                        border: none;
+                        outline: none;
+                    }
+                }
+            }
+        }
+        .channelsList {
+            max-height: 10rem;
+            padding: .5rem 0;
+            margin-top: 3.5rem;
+            font-size: $default-font-size;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background-color: rgba($color-grey-light, .15);
+            color: $color-grey-light;
+            li {
+                padding: .5rem 1rem;
+                word-break: break-all;
+                cursor: pointer;
+                transition: margin-left .1s ease-in-out;
+                &:hover {
+                    margin-left: -.5rem;
+                    background-color: rgba($color-grey-light, .19);
+                }
+            }
+        }
+    }
+}
+
+// Channel modal
+.addChannel {
+    background-color: $color-white;
+    padding: 5rem;
+    border-radius: .3rem;
+    font-size: $default-font-size;
+    .addChannelHeader {
+        h2 {
+            color: $color-primary;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+    }
+    .addChannelContent {
+        margin-top: 1.5rem;
+    }
+    .addChannelFields {
+        .addChannelField {
+            input {
+                color: $color-grey-dark;
+                border: .1rem solid rgba($color-black, .15);
+                width: 100%;
+                height: 5rem;
+                padding-left: 1rem;
+                outline: none;
+                transition: box-shadow .2s ease-in-out;
+                &:focus, &:active {
+                    box-shadow: 0 0 .2rem .2rem rgba($color-primary, .8);
+                }
+            }
+        }
+    }
+    .channelActions {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: flex-end;
+        button {
+            text-transform: uppercase;
+            font-size: 1.25rem;
+            background-color: rgba($color-black, .15);
+            padding: 1rem .5rem;
+            width: 10rem;
+            outline: none;
+            &:first-child {
+                background-color: $color-primary;
+                margin-right: 1rem;
+                @include mainButtonStyle;
+            }
+            &:last-child {
+                background-color: rgba($color-grey-dark, .1);
+            }
+        }
+    }
+}

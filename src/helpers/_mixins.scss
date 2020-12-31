@@ -1,0 +1,52 @@
+@mixin centerElement {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin backgroundImage {
+    background-size: cover;
+    background-position: top;
+    position: relative;
+}
+
+@mixin appNameStyle {
+    background-image: linear-gradient(
+        to right, 
+        $color-primary-light, 
+        $color-primary-dark
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 900;
+}
+
+@mixin errorMsgStyle {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: .5rem 1rem;
+    border-radius: 2px;
+    font-size: 1.3rem;
+    font-weight: 400;
+    display: flex;
+    span {
+        margin-right: .8rem;
+    }
+}
+
+@mixin mainButtonStyle {
+    transition: all .1s;
+    color: $color-white;
+    &:hover {
+        transform: translateY(-.3rem);
+        box-shadow: 0 1rem 2rem rgba($color-black, .1);
+    }
+    &:active {
+        box-shadow: 0 .5rem 1rem rgba($color-black, .15);
+        transform: translateY(0);
+    }
+}

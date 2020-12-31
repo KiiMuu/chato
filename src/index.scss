@@ -1,0 +1,42 @@
+// Tailwind CSS
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+// Colors
+@import './helpers/variables';
+
+html {
+    // This defines what 1rem is
+    font-size: 62.5%; // 1 rem = 10px; 10px / 16px = 62.5%
+}
+
+html,
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+::selection {
+    background-color: $color-primary;
+    color: $color-grey-light;
+}
+
+// scroll bar
+::-webkit-scrollbar {
+    width: .6rem;
+}
+::-webkit-scrollbar-track {
+    background-color: rgba($color-grey-light, .15);;
+    // border-radius: .5rem;
+}
+::-webkit-scrollbar-thumb {
+    background: $color-primary-dark;
+    // border-radius: .5rem;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: $color-primary-dark;
+}
