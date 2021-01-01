@@ -5,7 +5,10 @@ import Channels from './Channels';
 const SidePanel = ({ currentUser }) => {
     return (
         <div className={`${styles.sidepanel} p-6`}>
-            <UserPanel currentUser={currentUser} />
+            <UserPanel 
+                key={currentUser && currentUser.uid} 
+                currentUser={currentUser} 
+            />
             <Channels currentUser={currentUser} />
         </div>
     )

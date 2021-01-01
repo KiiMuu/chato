@@ -1,4 +1,5 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import firebase from '../../firebase';
 import styles from './Messages.module.scss';
 import { useDetectOutsideClicks } from '../../hooks/useDetectOutsideClicks';
 import Tooltip from '../layout/tooltip/Tooltip';
@@ -6,12 +7,58 @@ import Tooltip from '../layout/tooltip/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faPaperclip, faImage, faLocationArrow } from '@fortawesome/free-solid-svg-icons';
 
-const MessagesForm = () => {
+const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
 
+    // options
     const optionsRef = useRef(null);
     const [isOpenOptions, setIsOpenOptions] = useDetectOutsideClicks(optionsRef, false);
 
     const toggleOptions = () => setIsOpenOptions(!isOpenOptions);
+
+    // messages
+    const [values, setValues] = useState({
+        msg: '',
+        channel: currentChannel,
+        user: currentUser
+    });
+
+    const { msg, channel, user } = values;
+
+    const handleChange = e => {
+        setValues({
+            ...values,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    const createMessage = () => {
+        const messageCreation = {
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            user: {
+                id: user.uid,
+                name: user.displayName,
+                avatar: user.photoURL
+            },
+            content: msg,
+        }
+
+        return messageCreation;
+    }
+
+    const sendMessage = e => {
+        e.preventDefault();
+
+        if (msg) {
+            messagesRef.child(channel.id).push().set(createMessage()).then(() => {
+                setValues({
+                    ...values,
+                    msg: ''
+                });
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+    }
 
     return (
         <form className={styles.messagesForm}>
@@ -36,11 +83,13 @@ const MessagesForm = () => {
             </span>
             <input
                 type="text"
-                name="message"
+                name="msg"
+                value={msg}
                 placeholder="Type a message"
                 autoComplete="off"
+                onChange={handleChange}
             />
-            <button className={styles.sendButton}>
+            <button className={styles.sendButton} onClick={sendMessage}>
                 <FontAwesomeIcon icon={faArrowRight} />
             </button>
         </form>

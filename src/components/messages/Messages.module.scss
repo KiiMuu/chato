@@ -63,11 +63,11 @@
     url('../../img/messages/msg_bg1.jpg');
     color: rgba($color-white, .8);
     padding: 3rem;
-    // overflow-wrap: break-word;
-    // word-wrap: break-word;
-    // word-break: break-all;
-    // word-break: break-word;
-    // hyphens: auto;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 // MessagesForm.js
@@ -130,6 +130,87 @@
         transition: all .1s ease-in-out;
         &:hover {
             right: 1rem;
+        }
+    }
+}
+
+// Message.js
+.messageSelf {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
+    .msgContent {
+        position: relative;
+        &::before {
+            content: ' ';
+            right: .5rem;
+            top: -1.6rem;
+            border: solid transparent;
+            border-bottom-color: $color-white;
+            height: 0;
+            width: 0;
+            position: absolute;
+            border-width: .8rem;
+        }
+        .userName {
+            color: $color-primary-dark;
+        }
+    }
+}
+
+.messageYours {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    .msgContent {
+        position: relative;
+        &::before {
+            content: ' ';
+            left: .5rem;
+            top: -1.6rem;
+            border: solid transparent;
+            border-bottom-color: $color-white;
+            height: 0;
+            width: 0;
+            position: absolute;
+            border-width: .8rem;
+        }
+        .userName {
+            color: #2ecc71;
+        }
+    }
+}
+
+.message {
+    &:not(:first-child) {
+        margin-top: 2rem;
+    }
+    .userAvatar {
+        border-radius: 50%;
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .msgContent {
+        background-color: $color-white;
+        color: $color-black;
+        padding: 1rem 2rem;
+        border-radius: .3rem;
+        .userName {
+            font-weight: 600;
+        }
+        .messageText {
+            margin: 1rem 0;
+            line-height: 1.7;
+            color: rgba($color-black, .8);
+        }
+        .messageDate {
+            color: rgba($color-black, .5);
+            font-size: 1.3rem;
+            display: flex;
+            justify-content: flex-end;
         }
     }
 }
