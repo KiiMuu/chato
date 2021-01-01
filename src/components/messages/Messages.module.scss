@@ -145,13 +145,13 @@
         &::before {
             content: ' ';
             right: .5rem;
-            top: -1.6rem;
+            top: -1rem;
             border: solid transparent;
             border-bottom-color: $color-white;
             height: 0;
             width: 0;
             position: absolute;
-            border-width: .8rem;
+            border-width: .6rem;
         }
         .userName {
             color: $color-primary-dark;
@@ -169,13 +169,13 @@
         &::before {
             content: ' ';
             left: .5rem;
-            top: -1.6rem;
+            top: -1rem;
             border: solid transparent;
             border-bottom-color: $color-white;
             height: 0;
             width: 0;
             position: absolute;
-            border-width: .8rem;
+            border-width: .6rem;
         }
         .userName {
             color: #2ecc71;
@@ -213,4 +213,9 @@
             justify-content: flex-end;
         }
     }
+}
+
+// FileModal.js
+.addPhoto {
+    background-color: red;
 }

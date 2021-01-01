@@ -3,9 +3,14 @@ import firebase from '../../firebase';
 import styles from './Messages.module.scss';
 import { useDetectOutsideClicks } from '../../hooks/useDetectOutsideClicks';
 import Tooltip from '../layout/tooltip/Tooltip';
+import FileModal from './FileModal';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faPaperclip, faImage, faLocationArrow } from '@fortawesome/free-solid-svg-icons';
+import { 
+    faArrowRight, 
+    faPaperclip, 
+    faLocationArrow 
+} from '@fortawesome/free-solid-svg-icons';
 
 const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
 
@@ -69,8 +74,8 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
                     className={`${styles.optionsContent} ${isOpenOptions ? styles.openOptions : ''}`}>
                     <ul>
                         <li>
-                            <Tooltip content="Send Image" direction="right">
-                                <FontAwesomeIcon icon={faImage} />
+                            <Tooltip content="Send Photo" direction="right">
+                                <FileModal />
                             </Tooltip>
                         </li>
                         <li>

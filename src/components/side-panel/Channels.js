@@ -170,6 +170,7 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
                 key={channel.id}
                 onClick={() => changeChannel(channel)}
                 active={channel.id === activeChannel ? activeChannel : undefined}
+                className={channel.id === activeChannel ? styles.activeChannel : ''}
             >{channel.name}</li>
         ))
     );
