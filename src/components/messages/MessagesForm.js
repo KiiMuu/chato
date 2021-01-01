@@ -65,6 +65,10 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
         }
     }
 
+    const uploadPhoto = (file, metadata) => {
+        console.log(file, metadata);
+    }
+
     return (
         <form className={styles.messagesForm}>
             <span className={styles.moreOptionsButton} onClick={toggleOptions}>
@@ -75,7 +79,7 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
                     <ul>
                         <li>
                             <Tooltip content="Send Photo" direction="right">
-                                <FileModal />
+                                <FileModal uploadPhoto={uploadPhoto} />
                             </Tooltip>
                         </li>
                         <li>
