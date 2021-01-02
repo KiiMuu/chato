@@ -3,13 +3,13 @@ import styles from './Messages.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-const MessagesHeader = () => {
+const MessagesHeader = ({ channelName, usersCount }) => {
     return (
         <div className={styles.messagesHeader}>
-            <div className={styles.test}>
-                <h2>Channel</h2>
+            <div className={styles.messagesHeaderContent}>
+                <h2>{channelName}</h2>
                 <div className={styles.subMessagesHeader}>
-                    <span>2 users</span>
+                    <span>{usersCount}</span>
                 </div>
             </div>
             <div className={styles.searchMessages}>

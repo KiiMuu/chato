@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import styles from './Messages.module.scss';
 import moment from 'moment';
 
@@ -21,19 +20,38 @@ const Message = ({ message, user }) => {
                 className={styles.userAvatar}
                 draggable="false" 
             />
-            <div className={styles.msgContent}>
+            {isPhoto(message) ?
+                <div className={styles.msgPhoto}>
+                    <img 
+                        src={message.photo} 
+                        className={styles.imgMsg} 
+                        alt={message.user.name} 
+                        draggable="false"
+                    />
+                    <span className={styles.messageDate}>{timeFromNow(message.timestamp)}</span>
+                </div> : 
+                (<div className={styles.msgContent}>
+                    {message.user.id === user.uid ? '' : <span className={styles.userName}>{message.user.name}</span>}
+                    <p className={styles.messageText}>{message.content}</p>
+                    <span className={styles.messageDate}>{timeFromNow(message.timestamp)}</span>
+                </div>)
+            }
+            {/* <div className={styles.msgContent}>
                 {isPhoto(message) ?
-                <img 
-                    src={message.photo} 
-                    className={styles.imgMsg} 
-                    alt={message.user.name} 
-                /> : 
+                <Fragment>
+                    <img 
+                        src={message.photo} 
+                        className={styles.imgMsg} 
+                        alt={message.user.name} 
+                    />
+                    <span className={styles.messageDate}>{timeFromNow(message.timestamp)}</span>
+                </Fragment> :
                 (<Fragment>
                     <span className={styles.userName}>{message.user.name}</span>
                     <p className={styles.messageText}>{message.content}</p>
                     <span className={styles.messageDate}>{timeFromNow(message.timestamp)}</span>
                 </Fragment>)}
-            </div>
+            </div> */}
         </div>
     )
 }

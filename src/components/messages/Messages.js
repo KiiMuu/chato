@@ -12,10 +12,11 @@ const Messages = ({ currentChannel, currentUser }) => {
         channel: currentChannel,
         user: currentUser,
         messages: [],
+        numUniqueUsers: '',
         messagesLoading: false
     });
 
-    const { channel, user, messages, messagesLoading } = values;
+    const { channel, user, messages, numUniqueUsers, messagesLoading } = values;
 
     const messagesRef = firebase.database().ref('messages');
 
@@ -25,9 +26,22 @@ const Messages = ({ currentChannel, currentUser }) => {
         messagesRef.child(channelId).on('child_added', snap => {
             loadedMessages.push(snap.val());
 
+            const uniqueUsers = loadedMessages.reduce((acc, message) => {
+                if (!acc.includes(message.user.name)) {
+                    acc.push(message.user.name)
+                }
+    
+                return acc;
+            }, []);
+
+            const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0;
+    
+            const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
+
             setValues({
                 ...values,
                 messages: loadedMessages,
+                numUniqueUsers,
                 messagesLoading: true
             });
         });
@@ -46,7 +60,7 @@ const Messages = ({ currentChannel, currentUser }) => {
     }, []);
 
     const displayMessages = messages => {
-        return messages && messages.length > 0 && messages.map(message => (
+        return messages?.length > 0 && messages.map(message => (
             <Message 
                 key={message.timestamp} 
                 message={message} 
@@ -55,11 +69,17 @@ const Messages = ({ currentChannel, currentUser }) => {
         ));
     }
 
+    const displayChannelName = channel => channel ? channel.name : '';
+
     return (
         <div className={styles.mainMsg}>
-            <MessagesHeader />
+            <MessagesHeader 
+                channelName={displayChannelName(channel)} 
+                usersCount={numUniqueUsers}
+            />
             <div className={styles.messages}>
                 {messagesLoading ? displayMessages(messages) : <span className={styles.loadingMessages}>Loading messages...</span>}
+                {/* {displayMessages(messages)} */}
             </div>
             <MessagesForm 
                 messagesRef={messagesRef} 
