@@ -52,11 +52,9 @@ const FileModal = ({ uploadPhoto }) => {
     // modal content
     const modalContent = (
         <div className={styles.addPhoto}>
-            <div className={styles.addPhotoHeader}>
-                <h2>Add a new photo</h2>
-            </div>
             <div className={styles.addPhotoContent}>
                 <input
+                    className={styles.photoInput}
                     name="photo"
                     type="file" 
                     onChange={addPhoto}

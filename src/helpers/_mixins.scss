@@ -50,3 +50,32 @@
         transform: translateY(0);
     }
 }
+
+@mixin modalActionsButtons {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: flex-end;
+    button {
+        text-transform: uppercase;
+        font-size: 1.25rem;
+        background-color: rgba($color-black, .15);
+        padding: 1rem .5rem;
+        width: 10rem;
+        outline: none;
+        &:first-child {
+            background-color: $color-primary;
+            margin-right: 1rem;
+            @include mainButtonStyle;
+        }
+        &:last-child {
+            background-color: rgba($color-grey-dark, .1);
+        }
+    }
+}
+
+@mixin modalBodyStyle {
+    background-color: $color-white;
+    padding: 5rem;
+    border-radius: .3rem;
+    font-size: $default-font-size;
+}

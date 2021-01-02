@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import firebase from '../../firebase';
+import { v4 as uuidv4  } from 'uuid';
 import styles from './Messages.module.scss';
 import { useDetectOutsideClicks } from '../../hooks/useDetectOutsideClicks';
 import Tooltip from '../layout/tooltip/Tooltip';
@@ -24,10 +25,14 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
     const [values, setValues] = useState({
         msg: '',
         channel: currentChannel,
-        user: currentUser
+        user: currentUser,
+        uploadState: '',
+        percentUploaded: 0,
+        storageRef: firebase.storage().ref(),
+        errors: []
     });
 
-    const { msg, channel, user } = values;
+    const { msg, channel, user, uploadState, percentUploaded, storageRef, errors } = values;
 
     const handleChange = e => {
         setValues({
@@ -36,15 +41,20 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
         });
     }
 
-    const createMessage = () => {
+    const createMessage = (fileUrl = null) => {
         const messageCreation = {
             timestamp: firebase.database.ServerValue.TIMESTAMP,
             user: {
                 id: user.uid,
                 name: user.displayName,
                 avatar: user.photoURL
-            },
-            content: msg,
+            }
+        }
+
+        if (fileUrl !== null) {
+            messageCreation['photo'] = fileUrl;
+        } else {
+            messageCreation['content'] = msg;
         }
 
         return messageCreation;
@@ -66,7 +76,59 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
     }
 
     const uploadPhoto = (file, metadata) => {
-        console.log(file, metadata);
+        const pathToUpload = channel.id;
+        const ref = messagesRef;
+        const filePath = `chat/public/${uuidv4()}.jpg`;
+
+        setValues({
+            ...values,
+            uploadState: 'Uploading...',
+        });
+
+        storageRef.child(filePath).put(file, metadata).on('state_changed', snap => {
+            const percentUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+
+            setValues({
+                ...values,
+                percentUploaded
+            });
+        }, err => {
+            console.error(err);
+            
+            setValues({
+                ...values,
+                errors: errors.concat(err),
+                uploadState: 'error'
+            });
+        }, () => {
+            storageRef.child(filePath).put(file, metadata).snapshot.ref.getDownloadURL().then(downloadUrl => {
+                sendFileMessage(downloadUrl, ref, pathToUpload);
+            }).catch(err => {
+                console.error(err);
+            
+                setValues({
+                    ...values,
+                    errors: errors.concat(err),
+                    uploadState: 'error',
+                });
+            })
+        });
+    }
+
+    const sendFileMessage = (fileUrl, ref, pathToUpload) => {
+        ref.child(pathToUpload).push().set(createMessage(fileUrl)).then(() => {
+            setValues({
+                ...values,
+                uploadState: 'Done'
+            });
+        }).catch(err => {
+            console.error(err);
+
+            setValues({
+                ...values,
+                errors: errors.concat(err)
+            });
+        });
     }
 
     return (

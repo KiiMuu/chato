@@ -12,7 +12,7 @@ const Messages = ({ currentChannel, currentUser }) => {
         channel: currentChannel,
         user: currentUser,
         messages: [],
-        messagesLoading: true
+        messagesLoading: false
     });
 
     const { channel, user, messages, messagesLoading } = values;
@@ -28,7 +28,7 @@ const Messages = ({ currentChannel, currentUser }) => {
             setValues({
                 ...values,
                 messages: loadedMessages,
-                messagesLoading: false
+                messagesLoading: true
             });
         });
     }
@@ -59,7 +59,7 @@ const Messages = ({ currentChannel, currentUser }) => {
         <div className={styles.mainMsg}>
             <MessagesHeader />
             <div className={styles.messages}>
-                {displayMessages(messages)}
+                {messagesLoading ? displayMessages(messages) : <span className={styles.loadingMessages}>Loading messages...</span>}
             </div>
             <MessagesForm 
                 messagesRef={messagesRef} 

@@ -68,6 +68,12 @@
     word-break: break-all;
     word-break: break-word;
     hyphens: auto;
+    .loadingMessages {
+        display: block;
+        text-align: center;
+        font-size: 1.3rem;
+        color: rgba($color-white, .8);
+    }
 }
 
 // MessagesForm.js
@@ -198,6 +204,9 @@
         color: $color-black;
         padding: 1rem 2rem;
         border-radius: .3rem;
+        .imgMsg {
+            // 
+        }
         .userName {
             font-weight: 600;
         }
@@ -217,5 +226,13 @@
 
 // FileModal.js
 .addPhoto {
-    background-color: red;
+    @include modalBodyStyle;
+    .addPhotoContent {
+        .photoInput {
+            cursor: pointer;
+        }
+        .photoActions {
+            @include modalActionsButtons;
+        }
+    }
 }
