@@ -5,6 +5,7 @@ import styles from './Messages.module.scss';
 import { useDetectOutsideClicks } from '../../hooks/useDetectOutsideClicks';
 import Tooltip from '../layout/tooltip/Tooltip';
 import FileModal from './FileModal';
+import ProgressBar from './ProgressBar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -82,7 +83,7 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
 
         setValues({
             ...values,
-            uploadState: 'Uploading...',
+            uploadState: 'Uploading',
         });
 
         storageRef.child(filePath).put(file, metadata).on('state_changed', snap => {
@@ -90,7 +91,8 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
 
             setValues({
                 ...values,
-                percentUploaded
+                percentUploaded,
+                uploadState: 'Uploading'
             });
         }, err => {
             console.error(err);
@@ -131,8 +133,14 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
         });
     }
 
+    console.log('up state', uploadState);
+
     return (
         <form className={styles.messagesForm}>
+            <ProgressBar
+                uploadState={uploadState}
+                percentUploaded={percentUploaded}
+            />
             <span className={styles.moreOptionsButton} onClick={toggleOptions}>
                 <FontAwesomeIcon icon={faPaperclip} />
                 <div 
