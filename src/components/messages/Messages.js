@@ -101,25 +101,27 @@ const Messages = ({ currentChannel, currentUser }) => {
     }
 
     useEffect(() => {
-        handleSearhcMessages();
+        if (searchTerm) {
+            handleSearhcMessages();
+        }
 
         // eslint-disable-next-line
     }, [searchTerm]);
 
     const messagesAndResults = () => {
         if (searchTerm) {
-            if (searchResults.length === 0) {
-                return <span className={styles.loadingMessages}>No results found</span>;
-            } else if (searchLoading) {
+            if (searchLoading) {
                 return <span className={styles.loadingMessages}>Loading results...</span>;
+            } else if (searchResults.length === 0) {
+                return <span className={styles.loadingMessages}>No results found</span>;
             } else {
                 return displayMessages(searchResults)
             }
         } else {
-            if (messages.length === 0) {
-                return <span className={styles.loadingMessages}>No messages</span>;
-            } else if (messagesLoading) {
+            if (messagesLoading) {
                 return <span className={styles.loadingMessages}>Loading messages...</span>;
+            } else if (messages.length === 0) {
+                return <span className={styles.loadingMessages}>No messages</span>;
             } else {
                 return displayMessages(messages);
             }

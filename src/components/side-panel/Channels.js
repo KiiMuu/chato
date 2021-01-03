@@ -85,7 +85,7 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
     const setFirstChannel = () => {
         const firstChannel = allChannels[0];
 
-        if (firstLoaded && allChannels && allChannels.length > 0) {
+        if (firstLoaded &&  allChannels?.length > 0) {
             setCurrentChannel(firstChannel);
             setActiveChannel(firstChannel);
         }
@@ -108,7 +108,30 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
         removeListeners();
 
         // eslint-disable-next-line
-    }, []);
+    }, [firstLoaded]);
+
+    const changeChannel = channel => {
+        setActiveChannel(channel);
+        setCurrentChannel(channel);
+    }
+
+    const setActiveChannel = channel => {
+        setChannels({
+            ...channels,
+            activeChannel: channel.id
+        });
+    }
+
+    const displayChannels = allChannels => (
+        allChannels && allChannels.length > 0 && allChannels.map(channel => (
+            <li 
+                key={channel.id}
+                onClick={() => changeChannel(channel)}
+                active={channel.id === activeChannel ? activeChannel : undefined}
+                className={channel.id === activeChannel ? styles.activeChannel : ''}
+            >{channel.name}</li>
+        ))
+    );
 
     // modal content
     const modalContent = (
@@ -150,29 +173,6 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
                 </form>
             </div>
         </div>
-    );
-
-    const changeChannel = channel => {
-        setActiveChannel(channel);
-        setCurrentChannel(channel);
-    }
-
-    const setActiveChannel = channel => {
-        setChannels({
-            ...channels,
-            activeChannel: channel.id
-        });
-    }
-
-    const displayChannels = allChannels => (
-        allChannels && allChannels.length > 0 && allChannels.map(channel => (
-            <li 
-                key={channel.id}
-                onClick={() => changeChannel(channel)}
-                active={channel.id === activeChannel ? activeChannel : undefined}
-                className={channel.id === activeChannel ? styles.activeChannel : ''}
-            >{channel.name}</li>
-        ))
     );
     
     return (
