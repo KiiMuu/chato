@@ -123,7 +123,7 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
     }
 
     const displayChannels = allChannels => (
-        allChannels && allChannels.length > 0 && allChannels.map(channel => (
+        allChannels?.length > 0 && allChannels.map(channel => (
             <li 
                 key={channel.id}
                 onClick={() => changeChannel(channel)}
@@ -179,7 +179,7 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
         <div className={styles.channels}>
             <div className={styles.channelsLength}>
                 <span>
-                    Channels ({allChannels && allChannels.length})
+                    Channels ({allChannels?.length})
                 </span>
                 <span>
                     <button 
@@ -198,7 +198,7 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
                     />
                 </span>
             </div>
-            {allChannels && allChannels.length > 0 && <ul className={styles.channelsList}>{displayChannels(allChannels)}</ul>}
+            {allChannels?.length > 0 && <ul className={styles.channelsList}>{displayChannels(allChannels)}</ul>}
         </div>
     )
 }

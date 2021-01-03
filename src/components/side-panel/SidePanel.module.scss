@@ -42,7 +42,7 @@
             span:first-child {
                 position: absolute;
                 left: 0;
-                font-size: $default-font-size;
+                font-size: 1.4rem;
                 color: $color-grey-light;
             }
             span:last-child {
@@ -62,7 +62,7 @@
                     transform: translateY(.25rem);
                 }
                 .modalTrigger {
-                    font-size: 1.5rem;
+                    font-size: 1.4rem;
                     &:active, &:focus {
                         border: none;
                         outline: none;
@@ -73,7 +73,7 @@
         .channelsList {
             max-height: 10rem;
             margin-top: 3.5rem;
-            font-size: $default-font-size;
+            font-size: 1.4rem;
             overflow-y: auto;
             scroll-behavior: smooth;
             background-color: rgba($color-grey-light, .15);
@@ -88,9 +88,56 @@
                 }
             }
             .activeChannel {
-                background-color: rgba($color-primary-dark, .8);
+                background-color: rgba($color-grey-light, .19);
                 &:hover {
-                    background-color: rgba($color-primary-dark, .8);
+                    background-color: rgba($color-grey-light, .19);
+                }
+            }
+        }
+    }
+    // direct messages component
+    .directMessages {
+        margin-top: 1.5rem;
+        .usersLength {
+            span {
+                font-size: 1.4rem;
+                color: $color-grey-light;
+            }
+        }
+        .usersList {
+            max-height: 10rem;
+            margin-top: 1rem;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background-color: rgba($color-grey-light, .15);
+            color: $color-grey-light;
+            li {
+                &:not(:first-child) {
+                    margin-top: .5rem;
+                }
+                position: relative;
+                font-size: 1.4rem;
+                padding: .5rem 1rem;
+                word-break: break-all;
+                cursor: pointer;
+                transition: background-color .09s ease-in-out;
+                &:hover {
+                    background-color: rgba($color-grey-light, .19);
+                }
+            }
+            .statusIcon {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                width: .8rem;
+                height: .8rem;
+                border-radius: 50%;
+                margin-left: .8rem;
+                &.green {
+                    background-color: $color-green;
+                }
+                &.grey {
+                    background-color: rgba($color-grey-light, .4);
                 }
             }
         }
