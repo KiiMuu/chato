@@ -8,10 +8,11 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
 
     const [values, setValues] = useState({
         user: currentUser,
-        users: []
+        users: [],
+        activeChannel: ''
     });
 
-    const { user, users } = values;
+    const { user, users, activeChannel } = values;
 
     const usersRef = firebase.database().ref('users');
     const connectedRef = firebase.database().ref('.info/connected');
@@ -95,6 +96,13 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
         return userId < currentUserId ? `${userId}/${currentUserId}` : `${currentUserId}/${userId}`;
     }
 
+    const setActiveChannel = userId => {
+        setValues({
+            ...values,
+            activeChannel: userId
+        });
+    }
+
     const changeChannel = user => {
         const channelId = getChannelId(user.uid);
 
@@ -105,11 +113,17 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
 
         setCurrentChannel(channelData);
         setPrivateChannel(true);
+        setActiveChannel(user.uid);
     }
 
     const displayUsers = users => (
         users?.length > 0 && users.map(user => (
-            <li key={user.uid} onClick={() => changeChannel(user)}>
+            <li 
+                key={user.uid} 
+                onClick={() => changeChannel(user)}
+                active={user.uid === activeChannel ? activeChannel : undefined}
+                className={user.uid === activeChannel ? styles.activeChannel : ''}
+                >
                 @{user.name} 
                 <span className={`${styles.statusIcon} ${isUserOnline(user) ? styles.green : styles.grey}`}></span>
             </li>

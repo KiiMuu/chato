@@ -127,6 +127,12 @@
                     background-color: rgba($color-grey-light, .19);
                 }
             }
+            .activeChannel {
+                background-color: rgba($color-grey-light, .19);
+                &:hover {
+                    background-color: rgba($color-grey-light, .19);
+                }
+            }
             .statusIcon {
                 position: absolute;
                 top: 1rem;

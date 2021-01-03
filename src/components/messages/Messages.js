@@ -6,9 +6,10 @@ import MessagesHeader from './MessagesHeader';
 import MessagesForm from './MessagesForm';
 import Message from './Message';
 
-const Messages = ({ currentChannel, currentUser }) => {
+const Messages = ({ currentChannel, currentUser, isPrivateChannel }) => {
 
     const [values, setValues] = useState({
+        privateChannel: isPrivateChannel,
         channel: currentChannel,
         user: currentUser,
         messages: [],
@@ -19,14 +20,16 @@ const Messages = ({ currentChannel, currentUser }) => {
         messagesLoading: true
     });
 
-    const { channel, user, messages, numUniqueUsers, searchTerm, searchResults, searchLoading, messagesLoading } = values;
+    const { privateChannel, channel, user, messages, numUniqueUsers, searchTerm, searchResults, searchLoading, messagesLoading } = values;
 
     const messagesRef = firebase.database().ref('messages');
+    const privateMessagesRef = firebase.database().ref('privateMessages');
 
     const addMessageListener = channelId => {
         let loadedMessages = [];
+        const ref = getMessagesRef();
 
-        messagesRef.child(channelId).on('child_added', snap => {
+        ref.child(channelId).on('child_added', snap => {
             loadedMessages.push(snap.val());
 
             const uniqueUsers = loadedMessages.reduce((acc, message) => {
@@ -48,6 +51,10 @@ const Messages = ({ currentChannel, currentUser }) => {
                 messagesLoading: false
             });
         });
+    }
+
+    const getMessagesRef = () => {
+        return privateChannel ? privateMessagesRef : messagesRef;
     }
 
     const addListener = channelId => {
@@ -72,7 +79,9 @@ const Messages = ({ currentChannel, currentUser }) => {
         ));
     }
 
-    const displayChannelName = channel => channel ? channel.name : '';
+    const displayChannelName = channel => {
+        return channel ? `${privateChannel ? '@' : ''}${channel.name}` : '';
+    }
 
     const handleSearhcMessages = () => {
         const channelMessages = [...messages];
@@ -134,6 +143,7 @@ const Messages = ({ currentChannel, currentUser }) => {
                 channelName={displayChannelName(channel)} 
                 usersCount={numUniqueUsers}
                 handleSearhcChange={handleSearhcChange}
+                isPrivateChannel={privateChannel}
             />
             <div className={styles.messages}>
                 {messagesAndResults()}
@@ -142,6 +152,8 @@ const Messages = ({ currentChannel, currentUser }) => {
                 messagesRef={messagesRef} 
                 currentChannel={channel}
                 currentUser={user}
+                isPrivateChannel={privateChannel}
+                getMessagesRef={getMessagesRef}
             />
         </div>
     )

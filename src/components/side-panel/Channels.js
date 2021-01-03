@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { setCurrentChannel } from '../../actions';
+import { setCurrentChannel, setPrivateChannel } from '../../actions';
 import firebase from '../../firebase';
 import styles from './SidePanel.module.scss';
 import Modal from '../layout/modal/Modal';
@@ -11,7 +11,7 @@ import Tooltip from '../layout/tooltip/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-const Channels = ({ currentUser, setCurrentChannel }) => {
+const Channels = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
 
     const { isOpenModal, toggleModal, modalRef, handleEscKey } = useModal();
     const [channels, setChannels] = useState({
@@ -113,6 +113,7 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
     const changeChannel = channel => {
         setActiveChannel(channel);
         setCurrentChannel(channel);
+        setPrivateChannel(false);
     }
 
     const setActiveChannel = channel => {
@@ -203,4 +204,4 @@ const Channels = ({ currentUser, setCurrentChannel }) => {
     )
 }
 
-export default connect(null, { setCurrentChannel })(Channels);
+export default connect(null, { setCurrentChannel, setPrivateChannel })(Channels);

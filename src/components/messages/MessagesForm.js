@@ -14,7 +14,7 @@ import {
     faLocationArrow 
 } from '@fortawesome/free-solid-svg-icons';
 
-const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
+const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChannel, getMessagesRef }) => {
 
     // options
     const optionsRef = useRef(null);
@@ -65,7 +65,7 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
         e.preventDefault();
 
         if (msg) {
-            messagesRef.child(channel.id).push().set(createMessage()).then(() => {
+            getMessagesRef().child(channel.id).push().set(createMessage()).then(() => {
                 setValues({
                     ...values,
                     msg: ''
@@ -76,10 +76,18 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
         }
     }
 
+    const getPath = () => {
+        if (isPrivateChannel) {
+            return `chat/private-${channel.id}`;
+        } else {
+            return 'chat/public';
+        }
+    }
+
     const uploadPhoto = (file, metadata) => {
         const pathToUpload = channel.id;
-        const ref = messagesRef;
-        const filePath = `chat/public/${uuidv4()}.jpg`;
+        const ref = getMessagesRef();
+        const filePath = `${getPath()}/${uuidv4()}.jpg`;
 
         setValues({
             ...values,
