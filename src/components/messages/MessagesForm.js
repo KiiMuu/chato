@@ -133,8 +133,6 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser }) => {
         });
     }
 
-    console.log('up state', uploadState);
-
     return (
         <form className={styles.messagesForm}>
             <ProgressBar

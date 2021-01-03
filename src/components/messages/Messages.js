@@ -13,10 +13,13 @@ const Messages = ({ currentChannel, currentUser }) => {
         user: currentUser,
         messages: [],
         numUniqueUsers: '',
-        messagesLoading: false
+        searchTerm: '',
+        searchResults: [],
+        searchLoading: false,
+        messagesLoading: true
     });
 
-    const { channel, user, messages, numUniqueUsers, messagesLoading } = values;
+    const { channel, user, messages, numUniqueUsers, searchTerm, searchResults, searchLoading, messagesLoading } = values;
 
     const messagesRef = firebase.database().ref('messages');
 
@@ -42,7 +45,7 @@ const Messages = ({ currentChannel, currentUser }) => {
                 ...values,
                 messages: loadedMessages,
                 numUniqueUsers,
-                messagesLoading: true
+                messagesLoading: false
             });
         });
     }
@@ -71,15 +74,67 @@ const Messages = ({ currentChannel, currentUser }) => {
 
     const displayChannelName = channel => channel ? channel.name : '';
 
+    const handleSearhcMessages = () => {
+        const channelMessages = [...messages];
+        const regex = new RegExp(searchTerm, 'gi');
+        const searchResults = channelMessages.reduce((acc, message) => {
+            if ((message.content && message.content.match(regex)) || message.user.name.match(regex)) {
+                acc.push(message);
+            }
+
+            return acc;
+        }, []);
+
+        setValues({
+            ...values,
+            searchResults,
+            searchLoading: false
+        });
+    }
+
+    const handleSearhcChange = e => {
+        setValues({
+            ...values,
+            searchTerm: e.target.value,
+            searchLoading: true
+        });
+    }
+
+    useEffect(() => {
+        handleSearhcMessages();
+
+        // eslint-disable-next-line
+    }, [searchTerm]);
+
+    const messagesAndResults = () => {
+        if (searchTerm) {
+            if (searchResults.length === 0) {
+                return <span className={styles.loadingMessages}>No results found</span>;
+            } else if (searchLoading) {
+                return <span className={styles.loadingMessages}>Loading results...</span>;
+            } else {
+                return displayMessages(searchResults)
+            }
+        } else {
+            if (messages.length === 0) {
+                return <span className={styles.loadingMessages}>No messages</span>;
+            } else if (messagesLoading) {
+                return <span className={styles.loadingMessages}>Loading messages...</span>;
+            } else {
+                return displayMessages(messages);
+            }
+        }
+    }
+
     return (
         <div className={styles.mainMsg}>
             <MessagesHeader 
                 channelName={displayChannelName(channel)} 
                 usersCount={numUniqueUsers}
+                handleSearhcChange={handleSearhcChange}
             />
             <div className={styles.messages}>
-                {messagesLoading ? displayMessages(messages) : <span className={styles.loadingMessages}>Loading messages...</span>}
-                {/* {displayMessages(messages)} */}
+                {messagesAndResults()}
             </div>
             <MessagesForm 
                 messagesRef={messagesRef} 
