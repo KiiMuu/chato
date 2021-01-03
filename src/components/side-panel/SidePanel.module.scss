@@ -6,6 +6,8 @@
     background-color: $color-primary-dark;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    scroll-behavior: smooth;
     // user panel component
     .userpanelHeader {
         text-align: center;

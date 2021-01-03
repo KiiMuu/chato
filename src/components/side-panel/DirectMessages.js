@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { setCurrentChannel, setPrivateChannel } from '../../actions';
 import firebase from '../../firebase';
 import styles from './SidePanel.module.scss';
 
-const DirectMessages = ({ currentUser }) => {
+const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
 
     const [values, setValues] = useState({
         user: currentUser,
@@ -87,14 +89,32 @@ const DirectMessages = ({ currentUser }) => {
 
     const isUserOnline = user => user.status === 'online';
 
+    const getChannelId = userId => {
+        const currentUserId = user.uid;
+
+        return userId < currentUserId ? `${userId}/${currentUserId}` : `${currentUserId}/${userId}`;
+    }
+
+    const changeChannel = user => {
+        const channelId = getChannelId(user.uid);
+
+        const channelData = {
+            id: channelId,
+            name: user.name
+        }
+
+        setCurrentChannel(channelData);
+        setPrivateChannel(true);
+    }
+
     const displayUsers = users => (
         users?.length > 0 && users.map(user => (
-            <li key={user.uid}>
+            <li key={user.uid} onClick={() => changeChannel(user)}>
                 @{user.name} 
                 <span className={`${styles.statusIcon} ${isUserOnline(user) ? styles.green : styles.grey}`}></span>
             </li>
         ))
-    );
+    )
 
     return (
         <div className={styles.directMessages}>
@@ -108,4 +128,4 @@ const DirectMessages = ({ currentUser }) => {
     )
 }
 
-export default DirectMessages;
+export default connect(null, { setCurrentChannel, setPrivateChannel })(DirectMessages);
