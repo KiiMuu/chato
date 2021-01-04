@@ -107,13 +107,20 @@ const Channels = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
         setFirstChannel();
         removeListeners();
 
+        return () => {}
         // eslint-disable-next-line
     }, [firstLoaded]);
+
 
     const changeChannel = channel => {
         setActiveChannel(channel);
         setCurrentChannel(channel);
         setPrivateChannel(false);
+
+        setChannels({
+            ...channels,
+            channel
+        });
     }
 
     const setActiveChannel = channel => {

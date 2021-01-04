@@ -51,14 +51,14 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
         });
 
         presenceRef.on('child_added', snap => {
-            if (currentUserUid !== snap.key) {
+            if (user.uid !== snap.key) {
                 // add status to user
                 addStatusToUser(snap.key);
             }
         });
 
         presenceRef.on('child_removed', snap => {
-            if (currentUserUid !== snap.key) {
+            if (user.uid !== snap.key) {
                 // remove status from user
                 addStatusToUser(snap.key, false);
             }
@@ -81,12 +81,12 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
     }
 
     useEffect(() => {
-        if (user) {
-            addListeners(user.uid);
-        }
-
+        addListeners(user.uid);
+        
+        return () => {}
+        
         // eslint-disable-next-line
-    }, [user]);
+    }, [users.length]);
 
     const isUserOnline = user => user.status === 'online';
 

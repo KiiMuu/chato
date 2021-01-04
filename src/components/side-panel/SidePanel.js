@@ -2,6 +2,7 @@ import styles from './SidePanel.module.scss';
 import UserPanel from './UserPanel';
 import Channels from './Channels';
 import DirectMessages from './DirectMessages';
+import StarredChannels from './StarredChannels';
 
 const SidePanel = ({ currentUser }) => {
     return (
@@ -10,6 +11,7 @@ const SidePanel = ({ currentUser }) => {
                 key={currentUser && currentUser.uid} 
                 currentUser={currentUser} 
             />
+            <StarredChannels />
             <Channels currentUser={currentUser} />
             <DirectMessages currentUser={currentUser} />
         </div>

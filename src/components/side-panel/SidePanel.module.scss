@@ -150,6 +150,40 @@
             }
         }
     }
+    // Starred Channels
+    .starredChannels {
+        margin-top: 1.5rem;
+        .starredLength {
+            span {
+                font-size: 1.4rem;
+                color: $color-grey-light;
+            }
+        }
+        .starredList {
+            max-height: 10rem;
+            margin-top: 3.5rem;
+            font-size: 1.4rem;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background-color: rgba($color-grey-light, .15);
+            color: $color-grey-light;
+            li {
+                padding: .5rem 1rem;
+                word-break: break-all;
+                cursor: pointer;
+                transition: background-color .09s ease-in-out;
+                &:hover {
+                    background-color: rgba($color-grey-light, .19);
+                }
+            }
+            .activeChannel {
+                background-color: rgba($color-grey-light, .19);
+                &:hover {
+                    background-color: rgba($color-grey-light, .19);
+                }
+            }
+        }
+    }
 }
 
 // Channel modal

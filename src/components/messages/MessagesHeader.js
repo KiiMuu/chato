@@ -9,7 +9,7 @@ const MessagesHeader = ({ channelName, usersCount, handleSearhcChange, isPrivate
             <div className={styles.messagesHeaderContent}>
                 <h2>{channelName}</h2>
                 <div className={styles.subMessagesHeader}>
-                    <span>{usersCount}</span>
+                    {!isPrivateChannel ? <span>{usersCount}</span> : ''}
                 </div>
             </div>
             <div className={styles.searchMessages}>
