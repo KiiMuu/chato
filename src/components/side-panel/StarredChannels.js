@@ -6,13 +6,13 @@ import styles from './SidePanel.module.scss';
 
 const StarredChannels = ({ setCurrentChannel, setPrivateChannel, currentUser }) => {
 
+    const [starredChannels, setStarredChannels] = useState([]);
     const [values, setValues] = useState({
         user: currentUser,
         activeChannel: '',
-        starredChannels: []
     });
 
-    const { user, activeChannel, starredChannels } = values;
+    const { user, activeChannel } = values;
 
     const usersRef = firebase.database().ref('users');
 
@@ -22,28 +22,27 @@ const StarredChannels = ({ setCurrentChannel, setPrivateChannel, currentUser }) 
         }
 
         // eslint-disable-next-line
-    }, [user]);
+    }, []);
 
     const addListeners = userId => {
         usersRef.child(userId).child('starred').on('child_added', snap => {
             const starredChannel = { id: snap.key, ...snap.val() };
+            // newStarred.push({id: snap.key, ...snap.val()});
 
-            setValues({
-                ...values,
-                starredChannels: [...starredChannels, starredChannel]
-            });
+            setStarredChannels(prevStarredChannels => [
+                ...prevStarredChannels,
+                starredChannel
+            ]);
         });
 
         usersRef.child(userId).child('starred').on('child_removed', snap => {
             const unstarredChannel = { id: snap.key, ...snap.val() };
-            const filteredChannels = starredChannels.filter(channel => {
-                return channel.id !== unstarredChannel.id;
-            });
 
-            setValues({
-                ...values,
-                starredChannels: filteredChannels
-            });
+            setStarredChannels(prevStarredChannels =>
+                prevStarredChannels.filter(channel => {
+                    return channel.id !== unstarredChannel.id;
+                })
+            );
         });
     }
 
@@ -71,11 +70,14 @@ const StarredChannels = ({ setCurrentChannel, setPrivateChannel, currentUser }) 
         ))
     );
 
+    console.log(starredChannels.length);
+    console.log(starredChannels);
+
     return (
         <div className={styles.starredChannels}>
             <div className={styles.starredLength}>
                 <span>
-                    Starred ({starredChannels?.length})
+                    Starred ({starredChannels.length})
                 </span>
             </div>
             {starredChannels?.length > 0 && <ul className={styles.starredList}>{displayStarredChannels(starredChannels)}</ul>}

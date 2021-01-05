@@ -107,11 +107,9 @@ class Messages extends Component {
     }
 
     handleStarred = () => {
-        const { isChannelStarred } = this.state;
-
-        this.setState({
-            isChannelStarred: !isChannelStarred
-        }, () => this.starChannel());
+        this.setState(prevState => ({
+            isChannelStarred: !prevState.isChannelStarred
+        }), () => this.starChannel());
     }
 
     starChannel = () => {
