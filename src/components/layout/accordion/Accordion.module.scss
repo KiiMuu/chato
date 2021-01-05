@@ -1,0 +1,28 @@
+.accordion {
+    display: flex;
+    flex-direction: column;
+    .accButton {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        border: none;
+        outline: none;
+        transition: background-color 0.6s ease;
+        .accTitle {
+
+        }
+    }
+    .accordionContent {
+        // opacity: 0;
+        // visibility: hidden;
+        overflow: hidden;
+        transition: all 0.6s ease;
+    }
+    // .accordionContent.open {
+    //     overflow: auto;
+    //     visibility: visible;
+    // }
+}

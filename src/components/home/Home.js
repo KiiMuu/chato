@@ -2,20 +2,20 @@ import { connect } from 'react-redux';
 import styles from './Home.module.scss';
 
 // components
-import ColorPanel from '../color-panel/ColorPanel';
+// import ColorPanel from '../color-panel/ColorPanel';
 import SidePanel from '../side-panel/SidePanel';
 import Messages from '../messages/Messages';
-// import MetaPanel from '../meta-panel/MetaPanel';
+import MetaPanel from '../meta-panel/MetaPanel';
 
 const Home = ({ currentUser, currentChannel, isPrivateChannel }) => {
     return (
         <div className={styles.home}>
             <div className="flex flex-wrap">
-                <div className="flex-initial"><ColorPanel /></div>
-                <div className="w-full lg:w-1/5">
+                {/* <div className="flex-initial"><ColorPanel /></div> */}
+                <div className="w-full lg:w-1/6">
                     <SidePanel currentUser={currentUser} />
                 </div>
-                <div className="w-full lg:w-3/5">
+                <div className="w-full lg:w-4/6">
                     <Messages
                         key={currentChannel && currentChannel.id}
                         currentChannel={currentChannel}
@@ -23,7 +23,12 @@ const Home = ({ currentUser, currentChannel, isPrivateChannel }) => {
                         isPrivateChannel={isPrivateChannel}
                     />
                 </div>
-                {/* <div className="w-full lg:w-1/5"><MetaPanel /></div> */}
+                <div className="w-full lg:w-1/6">
+                    <MetaPanel
+                        key={currentChannel?.id}
+                        isPrivateChannel={isPrivateChannel}
+                    />
+                </div>
             </div>
         </div>
     )
