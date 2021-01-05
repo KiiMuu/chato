@@ -190,13 +190,13 @@ const Channels = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
                     Channels ({allChannels?.length})
                 </span>
                 <span>
-                    <button 
-                        className={styles.modalTrigger} 
-                        onClick={toggleModal}>
-                        <Tooltip content="Add new channel" direction="right">
+                    <Tooltip content="Add new channel" direction="right">
+                        <button 
+                            className={styles.modalTrigger} 
+                            onClick={toggleModal}>
                             <FontAwesomeIcon icon={faPlus} />
-                        </Tooltip>
-                    </button>
+                        </button>
+                    </Tooltip>
                     <Modal
                         isOpenModal={isOpenModal}
                         hide={toggleModal}

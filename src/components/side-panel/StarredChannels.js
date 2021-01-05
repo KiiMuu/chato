@@ -1,16 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import firebase from '../../firebase';
 import { setCurrentChannel, setPrivateChannel } from '../../actions';
 import styles from './SidePanel.module.scss';
 
-const StarredChannels = ({ setCurrentChannel, setPrivateChannel }) => {
+const StarredChannels = ({ setCurrentChannel, setPrivateChannel, currentUser }) => {
 
     const [values, setValues] = useState({
+        user: currentUser,
         activeChannel: '',
         starredChannels: []
     });
 
-    const { activeChannel, starredChannels } = values;
+    const { user, activeChannel, starredChannels } = values;
+
+    const usersRef = firebase.database().ref('users');
+
+    useEffect(() => {
+        if (user) {
+            addListeners(user.uid);
+        }
+
+        // eslint-disable-next-line
+    }, [user]);
+
+    const addListeners = userId => {
+        usersRef.child(userId).child('starred').on('child_added', snap => {
+            const starredChannel = { id: snap.key, ...snap.val() };
+
+            setValues({
+                ...values,
+                starredChannels: [...starredChannels, starredChannel]
+            });
+        });
+
+        usersRef.child(userId).child('starred').on('child_removed', snap => {
+            const unstarredChannel = { id: snap.key, ...snap.val() };
+            const filteredChannels = starredChannels.filter(channel => {
+                return channel.id !== unstarredChannel.id;
+            });
+
+            setValues({
+                ...values,
+                starredChannels: filteredChannels
+            });
+        });
+    }
 
     const setActiveChannel = channel => {
         setValues({
@@ -30,7 +65,7 @@ const StarredChannels = ({ setCurrentChannel, setPrivateChannel }) => {
             <li 
                 key={starredCh.id}
                 onClick={() => changeChannel(starredCh)}
-                active={starredCh.id === activeChannel}
+                active={starredCh.id === activeChannel ? activeChannel : undefined}
                 className={starredCh.id === activeChannel ? styles.activeChannel : ''}
             >{starredCh.name}</li>
         ))

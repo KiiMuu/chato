@@ -11,7 +11,7 @@ const SidePanel = ({ currentUser }) => {
                 key={currentUser && currentUser.uid} 
                 currentUser={currentUser} 
             />
-            <StarredChannels />
+            <StarredChannels currentUser={currentUser} />
             <Channels currentUser={currentUser} />
             <DirectMessages currentUser={currentUser} />
         </div>

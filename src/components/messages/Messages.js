@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { Component } from 'react';
 import styles from './Messages.module.scss';
 import firebase from '../../firebase';
 
@@ -6,70 +6,91 @@ import MessagesHeader from './MessagesHeader';
 import MessagesForm from './MessagesForm';
 import Message from './Message';
 
-const Messages = ({ currentChannel, currentUser, isPrivateChannel }) => {
+class Messages extends Component {
 
-    const [values, setValues] = useState({
-        privateChannel: isPrivateChannel,
-        channel: currentChannel,
-        user: currentUser,
+    state = {
+        privateChannel: this.props.isPrivateChannel,
+        channel: this.props.currentChannel,
+        user: this.props.currentUser,
         messages: [],
         numUniqueUsers: '',
         searchTerm: '',
         searchResults: [],
         searchLoading: false,
-        messagesLoading: true
-    });
+        messagesLoading: true,
+        isChannelStarred: false,
+        messagesRef: firebase.database().ref('messages'),
+        privateMessagesRef: firebase.database().ref('privateMessages'),
+        usersRef: firebase.database().ref('users')
+    }
 
-    const { privateChannel, channel, user, messages, numUniqueUsers, searchTerm, searchResults, searchLoading, messagesLoading } = values;
-
-    const messagesRef = firebase.database().ref('messages');
-    const privateMessagesRef = firebase.database().ref('privateMessages');
-
-    const addMessageListener = channelId => {
+    addMessageListener = channelId => {
         let loadedMessages = [];
-        const ref = getMessagesRef();
+        const ref = this.getMessagesRef();
 
         ref.child(channelId).on('child_added', snap => {
             loadedMessages.push(snap.val());
 
-            const uniqueUsers = loadedMessages.reduce((acc, message) => {
-                if (!acc.includes(message.user.name)) {
-                    acc.push(message.user.name)
-                }
-    
-                return acc;
-            }, []);
-
-            const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0;
-    
-            const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
-
-            setValues({
-                ...values,
+            this.setState({
                 messages: loadedMessages,
-                numUniqueUsers,
                 messagesLoading: false
             });
+
+            this.countUniqueUsers(loadedMessages);
         });
     }
 
-    const getMessagesRef = () => {
+    countUniqueUsers = messages => {
+        const uniqueUsers = messages.reduce((acc, message) => {
+            if (!acc.includes(message.user.name)) {
+                acc.push(message.user.name)
+            }
+
+            return acc;
+        }, []);
+
+        const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0;
+
+        const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
+
+        this.setState({ numUniqueUsers });
+    };
+
+    getMessagesRef = () => {
+        const { messagesRef, privateMessagesRef, privateChannel } = this.state;
+
         return privateChannel ? privateMessagesRef : messagesRef;
     }
 
-    const addListener = channelId => {
-        addMessageListener(channelId);
+    addListener = channelId => {
+        this.addMessageListener(channelId);
     }
 
-    useEffect(() => {
+    addUserStars = (channelId, userId) => {
+        this.state.usersRef.child(userId).child('starred').once('value').then(data => {
+            if (data.val() !== null) {
+                const channelIds = Object.keys(data.val());
+                const prevStarred = channelIds.includes(channelId);
+
+                this.setState({
+                    isChannelStarred: prevStarred
+                });
+            }
+        });
+    }
+
+    componentDidMount() {
+        const { channel, user } = this.state;
+
         if (channel && user) {
-            addListener(channel.id);
+            this.addListener(channel.id);
+            this.addUserStars(channel.id, user.uid);
         }
+    }
 
-        // eslint-disable-next-line
-    }, []);
+    displayMessages = messages => {
+        const { user } = this.state;
 
-    const displayMessages = messages => {
         return messages?.length > 0 && messages.map(message => (
             <Message 
                 key={message.timestamp} 
@@ -79,11 +100,48 @@ const Messages = ({ currentChannel, currentUser, isPrivateChannel }) => {
         ));
     }
 
-    const displayChannelName = channel => {
+    displayChannelName = channel => {
+        const { privateChannel } = this.state;
+
         return channel ? `${privateChannel ? '@' : ''}${channel.name}` : '';
     }
 
-    const handleSearhcMessages = () => {
+    handleStarred = () => {
+        const { isChannelStarred } = this.state;
+
+        this.setState({
+            isChannelStarred: !isChannelStarred
+        }, () => this.starChannel());
+    }
+
+    starChannel = () => {
+        const { isChannelStarred, usersRef, channel, user } = this.state;
+
+        if (isChannelStarred) {
+            usersRef.child(`${user.uid}/starred`).update({
+                [channel.id]: {
+                    name: channel.name,
+                    details: channel.details,
+                    createdBy: {
+                        name: channel.createdBy.name,
+                        avatar: channel.createdBy.avatar,
+                    }
+                }
+            });
+        } else {
+            usersRef.child(`${user.uid}/starred`).child(channel.id).remove(err => {
+                if (err !== null) {
+                    console.error(err);
+                }
+            });
+        }
+    }
+
+
+
+    handleSearhcMessages = () => {
+        const { searchTerm, messages } = this.state;
+
         const channelMessages = [...messages];
         const regex = new RegExp(searchTerm, 'gi');
         const searchResults = channelMessages.reduce((acc, message) => {
@@ -94,37 +152,29 @@ const Messages = ({ currentChannel, currentUser, isPrivateChannel }) => {
             return acc;
         }, []);
 
-        setValues({
-            ...values,
+        this.setState({
             searchResults,
             searchLoading: false
         });
     }
 
-    const handleSearhcChange = e => {
-        setValues({
-            ...values,
+    handleSearhcChange = e => {        
+        this.setState({
             searchTerm: e.target.value,
             searchLoading: true
-        });
+        }, () => this.handleSearhcMessages());
     }
 
-    useEffect(() => {
-        if (searchTerm) {
-            handleSearhcMessages();
-        }
+    messagesAndResults = () => {
+        const { messages, searchTerm, searchResults, searchLoading, messagesLoading } = this.state;
 
-        // eslint-disable-next-line
-    }, [searchTerm]);
-
-    const messagesAndResults = () => {
         if (searchTerm) {
             if (searchLoading) {
                 return <span className={styles.loadingMessages}>Loading results...</span>;
             } else if (searchResults.length === 0) {
                 return <span className={styles.loadingMessages}>No results found</span>;
             } else {
-                return displayMessages(searchResults)
+                return this.displayMessages(searchResults)
             }
         } else {
             if (messagesLoading) {
@@ -132,31 +182,38 @@ const Messages = ({ currentChannel, currentUser, isPrivateChannel }) => {
             } else if (messages.length === 0) {
                 return <span className={styles.loadingMessages}>No messages</span>;
             } else {
-                return displayMessages(messages);
+                return this.displayMessages(messages);
             }
         }
     }
 
-    return (
-        <div className={styles.mainMsg}>
-            <MessagesHeader 
-                channelName={displayChannelName(channel)} 
-                usersCount={numUniqueUsers}
-                handleSearhcChange={handleSearhcChange}
-                isPrivateChannel={privateChannel}
-            />
-            <div className={styles.messages}>
-                {messagesAndResults()}
+    render() {
+
+        const { privateChannel, channel, numUniqueUsers, user, isChannelStarred } = this.state;
+
+        return (
+            <div className={styles.mainMsg}>
+                <MessagesHeader 
+                    channelName={this.displayChannelName(channel)} 
+                    usersCount={numUniqueUsers}
+                    handleSearhcChange={this.handleSearhcChange}
+                    isPrivateChannel={privateChannel}
+                    handleStarred={this.handleStarred}
+                    isChannelStarred={isChannelStarred}
+                />
+                <div className={styles.messages}>
+                    {this.messagesAndResults()}
+                </div>
+                <MessagesForm 
+                    messagesRef={this.messagesRef} 
+                    currentChannel={channel}
+                    currentUser={user}
+                    isPrivateChannel={privateChannel}
+                    getMessagesRef={this.getMessagesRef}
+                />
             </div>
-            <MessagesForm 
-                messagesRef={messagesRef} 
-                currentChannel={channel}
-                currentUser={user}
-                isPrivateChannel={privateChannel}
-                getMessagesRef={getMessagesRef}
-            />
-        </div>
-    )
+        )
+    }
 }
 
 export default Messages;

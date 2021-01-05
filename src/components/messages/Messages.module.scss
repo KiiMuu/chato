@@ -6,6 +6,22 @@
 }
 
 // MessagesHeader.js
+.star {
+    vertical-align: top;
+    margin-left: .5rem;
+    cursor: pointer;
+    font-size: 1.4rem;
+    .starred {
+        color: rgba($color-white, .5);
+        transition: transform .3s ease-in-out;
+        &:active {
+            transform: scale(1.3);
+        }
+    }
+    .unstarred {
+        color: $color-yellow;
+    }
+}
 .messagesHeader {
     height: 7rem;
     position: relative;
