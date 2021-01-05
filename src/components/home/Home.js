@@ -7,7 +7,7 @@ import SidePanel from '../side-panel/SidePanel';
 import Messages from '../messages/Messages';
 import MetaPanel from '../meta-panel/MetaPanel';
 
-const Home = ({ currentUser, currentChannel, isPrivateChannel }) => {
+const Home = ({ currentUser, currentChannel, isPrivateChannel, userMessages }) => {
     return (
         <div className={styles.home}>
             <div className="flex flex-wrap">
@@ -28,6 +28,7 @@ const Home = ({ currentUser, currentChannel, isPrivateChannel }) => {
                         key={currentChannel?.id}
                         isPrivateChannel={isPrivateChannel}
                         currentChannel={currentChannel}
+                        userMessages={userMessages}
                     />
                 </div>
             </div>
@@ -38,7 +39,8 @@ const Home = ({ currentUser, currentChannel, isPrivateChannel }) => {
 const mapStateToProps = ({ user, channel }) => ({
     currentUser: user.currentUser,
     currentChannel: channel.currentChannel,
-    isPrivateChannel: channel.isPrivateChannel
+    isPrivateChannel: channel.isPrivateChannel,
+    userMessages: channel.userMessages
 });
 
 export default connect(mapStateToProps)(Home);

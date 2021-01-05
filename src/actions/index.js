@@ -34,3 +34,12 @@ export const setPrivateChannel = isPrivateChannel => {
         }
     }
 }
+
+export const setUserMessages = userMessages => {
+    return {
+        type: actionTypes.SET_USER_MESSAGES,
+        payload: {
+            userMessages
+        }
+    }
+}

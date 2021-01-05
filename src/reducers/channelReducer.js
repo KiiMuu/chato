@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/types';
 
 const initialChannelState = {
     currentChannel: null,
-    isPrivateChannel: false
+    isPrivateChannel: false,
+    userMessages: null
 }
 
 const channelReducer = (state = initialChannelState, action) => {
@@ -16,6 +17,11 @@ const channelReducer = (state = initialChannelState, action) => {
             return {
                 ...state,
                 isPrivateChannel: action.payload.isPrivateChannel
+            }
+        case actionTypes.SET_USER_MESSAGES:
+            return {
+                ...state,
+                userMessages: action.payload.userMessages
             }
         default:
             return state;

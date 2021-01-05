@@ -1,6 +1,8 @@
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import styles from './Messages.module.scss';
 import firebase from '../../firebase';
+import { setUserMessages } from '../../actions'
 
 import MessagesHeader from './MessagesHeader';
 import MessagesForm from './MessagesForm';
@@ -37,6 +39,7 @@ class Messages extends Component {
             });
 
             this.countUniqueUsers(loadedMessages);
+            this.countUserMessages(loadedMessages);
         });
     }
 
@@ -54,7 +57,24 @@ class Messages extends Component {
         const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
 
         this.setState({ numUniqueUsers });
-    };
+    }
+
+    countUserMessages = messages => {
+        let userMessages = messages.reduce((acc, message) => {
+            if (message.user.name in acc) {
+                acc[message.user.name].count += 1;
+            } else {
+                acc[message.user.name] = {
+                    avatar: message.user.avatar,
+                    count: 1
+                }
+            }
+
+            return acc;
+        }, {});
+
+        this.props.setUserMessages(userMessages);
+    }
 
     getMessagesRef = () => {
         const { messagesRef, privateMessagesRef, privateChannel } = this.state;
@@ -214,4 +234,4 @@ class Messages extends Component {
     }
 }
 
-export default Messages;
+export default connect(null, { setUserMessages })(Messages);
