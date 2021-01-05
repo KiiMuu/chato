@@ -1,8 +1,30 @@
 @import '../../helpers/variables';
 
 .metapanel {
-    
+    height: 100vh;
+    background-color: $color-primary-dark;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    font-size: $default-font-size;
+    color: $color-white;
     .metapanelHeader {
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2rem;
+        h2 {
+            word-break: break-all;
+        }
+    }
+    .metapanelContent {
+        .details {
+            margin-bottom: 2rem;
+        }
+        .topPosters {
+            margin-bottom: 2rem;
+        }
+        .creator {
 
+        }
     }
 }

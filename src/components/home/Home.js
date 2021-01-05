@@ -27,6 +27,7 @@ const Home = ({ currentUser, currentChannel, isPrivateChannel }) => {
                     <MetaPanel
                         key={currentChannel?.id}
                         isPrivateChannel={isPrivateChannel}
+                        currentChannel={currentChannel}
                     />
                 </div>
             </div>
