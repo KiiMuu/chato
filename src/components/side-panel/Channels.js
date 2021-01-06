@@ -25,6 +25,7 @@ const Channels = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
     const { activeChannel, allChannels, channelName, channelDetails, firstLoaded } = channels;
 
     const channelsRef = firebase.database().ref('channels');
+    const typingRef = firebase.database().ref('typing');
 
     const handleChange = e => {
         setChannels({
@@ -114,6 +115,7 @@ const Channels = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
 
     const changeChannel = channel => {
         setActiveChannel(channel);
+        typingRef.child(channel.id).child(currentUser.uid).remove();
         setCurrentChannel(channel);
         setPrivateChannel(false);
 

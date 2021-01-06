@@ -1,24 +1,22 @@
-import { useState, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { setCurrentChannel, setPrivateChannel } from '../../actions';
 import firebase from '../../firebase';
 import styles from './SidePanel.module.scss';
 
-const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
+class DirectMessages extends Component {
 
-    const [values, setValues] = useState({
-        user: currentUser,
+    state = {
+        user: this.props.currentUser,
         users: [],
-        activeChannel: ''
-    });
+        activeChannel: '',
+        usersRef: firebase.database().ref('users'),
+        connectedRef: firebase.database().ref('.info/connected'),
+        presenceRef: firebase.database().ref('presence')
+    }
 
-    const { user, users, activeChannel } = values;
-
-    const usersRef = firebase.database().ref('users');
-    const connectedRef = firebase.database().ref('.info/connected');
-    const presenceRef = firebase.database().ref('presence');
-
-    const addListeners = currentUserUid => {
+    addListeners = currentUserUid => {
+        const { usersRef, connectedRef, presenceRef, user } = this.state;
         let loadedUsers = [];
 
         usersRef.on('child_added', snap => {
@@ -30,10 +28,7 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
 
                 loadedUsers.push(user);
 
-                setValues({
-                    ...values,
-                    users: loadedUsers
-                });
+                this.setState({ users: loadedUsers });
             }
         });
 
@@ -51,22 +46,22 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
         });
 
         presenceRef.on('child_added', snap => {
-            if (user.uid !== snap.key) {
+            if (this.state.user.uid !== snap.key) {
                 // add status to user
-                addStatusToUser(snap.key);
+                this.addStatusToUser(snap.key);
             }
         });
 
         presenceRef.on('child_removed', snap => {
             if (user.uid !== snap.key) {
                 // remove status from user
-                addStatusToUser(snap.key, false);
+                this.addStatusToUser(snap.key, false);
             }
         });
     }
 
-    const addStatusToUser = (userId, connected = true) => {
-        const updatedUsers = users.reduce((acc, user) => {
+    addStatusToUser = (userId, connected = true) => {
+        const updatedUsers = this.state.users.reduce((acc, user) => {
             if (user.uid === userId) {
                 user['status'] = `${connected ? 'online' : 'offline'}`;
             }
@@ -74,72 +69,71 @@ const DirectMessages = ({ currentUser, setCurrentChannel, setPrivateChannel }) =
             return acc.concat(user);
         }, []);
 
-        setValues({
-            ...values,
+        this.setState({
             users: updatedUsers
         });
     }
 
-    useEffect(() => {
-        addListeners(user.uid);
-        
-        return () => {}
-        
-        // eslint-disable-next-line
-    }, [users.length]);
+    componentDidMount() {
+        if (this.state.user) {
+            this.addListeners(this.state.user.uid);
+        }
+    }
 
-    const isUserOnline = user => user.status === 'online';
+    isUserOnline = user => user.status === "online";
 
-    const getChannelId = userId => {
-        const currentUserId = user.uid;
+    getChannelId = userId => {
+        const currentUserId = this.state.user.uid;
 
         return userId < currentUserId ? `${userId}/${currentUserId}` : `${currentUserId}/${userId}`;
     }
 
-    const setActiveChannel = userId => {
-        setValues({
-            ...values,
-            activeChannel: userId
-        });
+    setActiveChannel = userId => {
+        this.setState({ activeChannel: userId });
     }
 
-    const changeChannel = user => {
-        const channelId = getChannelId(user.uid);
+    changeChannel = user => {
+        const channelId = this.getChannelId(user.uid);
 
         const channelData = {
             id: channelId,
             name: user.name
         }
 
-        setCurrentChannel(channelData);
-        setPrivateChannel(true);
-        setActiveChannel(user.uid);
+        this.props.setCurrentChannel(channelData);
+        this.props.setPrivateChannel(true);
+        this.setActiveChannel(user.uid);
     }
 
-    const displayUsers = users => (
+    displayUsers = users => (
         users?.length > 0 && users.map(user => (
             <li 
                 key={user.uid} 
-                onClick={() => changeChannel(user)}
-                active={user.uid === activeChannel ? activeChannel : undefined}
-                className={user.uid === activeChannel ? styles.activeChannel : ''}
+                onClick={() => this.changeChannel(user)}
+                active={user.uid === this.state.activeChannel ? this.state.activeChannel : undefined}
+                className={user.uid === this.state.activeChannel ? styles.activeChannel : ''}
                 >
                 @{user.name} 
-                <span className={`${styles.statusIcon} ${isUserOnline(user) ? styles.green : styles.grey}`}></span>
+                <span className={`${styles.statusIcon} ${this.isUserOnline(user) ? styles.green : styles.grey}`}></span>
             </li>
         ))
     )
 
-    return (
-        <div className={styles.directMessages}>
-            <div className={styles.usersLength}>
-                <span>
-                    Direct Message ({users?.length})
-                </span>
+    render() {
+
+        const { users } = this.state;
+
+        return (
+            <div className={styles.directMessages}>
+                <div className={styles.usersLength}>
+                    <span>
+                        Direct Message ({users?.length})
+                    </span>
+                </div>
+                {users?.length > 0 && <ul className={styles.usersList}>{this.displayUsers(users)}</ul>}
             </div>
-            {users?.length > 0 && <ul className={styles.usersList}>{displayUsers(users)}</ul>}
-        </div>
-    )
+        )
+    }
 }
 
 export default connect(null, { setCurrentChannel, setPrivateChannel })(DirectMessages);

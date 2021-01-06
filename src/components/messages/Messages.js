@@ -7,6 +7,7 @@ import { setUserMessages } from '../../actions'
 import MessagesHeader from './MessagesHeader';
 import MessagesForm from './MessagesForm';
 import Message from './Message';
+import Typing from './Typing';
 
 class Messages extends Component {
 
@@ -23,7 +24,10 @@ class Messages extends Component {
         isChannelStarred: false,
         messagesRef: firebase.database().ref('messages'),
         privateMessagesRef: firebase.database().ref('privateMessages'),
-        usersRef: firebase.database().ref('users')
+        usersRef: firebase.database().ref('users'),
+        typingRef: firebase.database().ref('typing'),
+        connectedRef: firebase.database().ref('.info/connected'),
+        typingUsers: []
     }
 
     addMessageListener = channelId => {
@@ -84,6 +88,48 @@ class Messages extends Component {
 
     addListener = channelId => {
         this.addMessageListener(channelId);
+        this.addTypingListener(channelId);
+    }
+
+    addTypingListener = channelId => {
+        const { typingRef, user, connectedRef } = this.state;
+
+        let typingUsers = [];
+
+        typingRef.child(channelId).on('child_added', snap => {
+            if (snap.key !== user.uid) {
+                typingUsers = typingUsers.concat({
+                    id: snap.key,
+                    name: snap.val()
+                });
+
+                this.setState({
+                    typingUsers
+                });
+            }
+        });
+
+        typingRef.child(channelId).on('child_removed', snap => {
+            const index = typingUsers.findIndex(user => user.id === snap.key);
+
+            if (index !== -1) {
+                typingUsers = typingUsers.filter(user => user.id !== snap.key);
+
+                this.setState({
+                    typingUsers
+                });
+            }
+        });
+
+        connectedRef.on('value', snap => {
+            if (snap.val() === true) {
+                typingRef.child(channelId).child(user.uid).onDisconnect().remove(err => {
+                    if (err !== null) {
+                        console.error(err);
+                    }
+                });
+            }
+        });
     }
 
     addUserStars = (channelId, userId) => {
@@ -205,9 +251,18 @@ class Messages extends Component {
         }
     }
 
+    showTypingUsers = users => {
+        return users.length > 0 && users.map(user => (
+            <div className="flex items-center mb-2" key={user.id}>
+                <span className="mr-3">{user.name} is typing</span>
+                <Typing />
+            </div>
+        ));
+    }
+
     render() {
 
-        const { privateChannel, channel, numUniqueUsers, user, isChannelStarred } = this.state;
+        const { privateChannel, channel, numUniqueUsers, user, isChannelStarred, typingUsers } = this.state;
 
         return (
             <div className={styles.mainMsg}>
@@ -221,6 +276,7 @@ class Messages extends Component {
                 />
                 <div className={styles.messages}>
                     {this.messagesAndResults()}
+                    {this.showTypingUsers(typingUsers)}
                 </div>
                 <MessagesForm 
                     messagesRef={this.messagesRef} 

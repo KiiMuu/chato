@@ -35,11 +35,21 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
 
     const { msg, channel, user, uploadState, percentUploaded, storageRef, errors } = values;
 
+    const typingRef = firebase.database().ref('typing');
+
     const handleChange = e => {
         setValues({
             ...values,
             [e.target.name]: e.target.value
         });
+    }
+
+    const handleTyping = e => {
+        if (msg) {
+            typingRef.child(channel.id).child(user.uid).set(user.displayName);
+        } else {
+            typingRef.child(channel.id).child(user.uid).remove();
+        }
     }
 
     const createMessage = (fileUrl = null) => {
@@ -70,6 +80,8 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
                     ...values,
                     msg: ''
                 });
+
+                typingRef.child(channel.id).child(user.uid).remove();
             }).catch(err => {
                 console.log(err);
             });
@@ -173,6 +185,7 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
                 placeholder="Type a message"
                 autoComplete="off"
                 onChange={handleChange}
+                onKeyDown={handleTyping}
             />
             <button className={styles.sendButton} onClick={sendMessage}>
                 <FontAwesomeIcon icon={faArrowRight} />
