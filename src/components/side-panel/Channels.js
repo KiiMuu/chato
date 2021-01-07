@@ -9,7 +9,7 @@ import Tooltip from '../layout/tooltip/Tooltip';
 
 // icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 
 const Channels = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
 
@@ -189,7 +189,7 @@ const Channels = ({ currentUser, setCurrentChannel, setPrivateChannel }) => {
         <div className={styles.channels}>
             <div className={styles.channelsLength}>
                 <span>
-                    Channels ({allChannels?.length})
+                    <FontAwesomeIcon icon={faUserFriends} className={styles.usersIcon} /> Channels ({allChannels?.length})
                 </span>
                 <span>
                     <Tooltip content="Add new channel" direction="right">

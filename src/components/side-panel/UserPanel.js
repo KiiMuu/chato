@@ -59,7 +59,7 @@ const UserPanel = ({ currentUser }) => {
     }
 
     const handleUploadPhoto = () => {
-        storageRef.child(`avatars/user-${userRef.uid}`).put(blob, metadata).then(snap => {
+        storageRef.child(`avatars/user/${userRef.uid}`).put(blob, metadata).then(snap => {
             snap.ref.getDownloadURL().then(downloadUrl => {
                 setValues({
                     ...values,

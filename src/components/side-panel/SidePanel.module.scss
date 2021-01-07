@@ -40,6 +40,10 @@
         margin-top: 1.5rem;
         .channelsLength {
             position: relative;
+            .usersIcon {
+                color: $color-mauve;
+                margin-right: .3rem;
+            }
             span:first-child {
                 position: absolute;
                 left: 0;
@@ -100,6 +104,10 @@
     .directMessages {
         margin-top: 1.5rem;
         .usersLength {
+            .directIcon {
+                color: $color-red-dark;
+                margin-right: .3rem;
+            }
             span {
                 font-size: 1.4rem;
                 color: $color-grey-light;
@@ -153,6 +161,10 @@
     .starredChannels {
         margin-top: 1.5rem;
         .starredLength {
+            .starIcon {
+                color: $color-yellow;
+                margin-right: .3rem;
+            }
             span {
                 font-size: 1.4rem;
                 color: $color-grey-light;

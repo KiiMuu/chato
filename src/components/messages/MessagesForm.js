@@ -13,7 +13,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faArrowRight, 
     faPaperclip, 
-    faLocationArrow, 
     faLaughBeam,
     faTimes
 } from '@fortawesome/free-solid-svg-icons';
@@ -51,6 +50,10 @@ const MessagesForm = ({ currentChannel, currentUser, isPrivateChannel, getMessag
     }
 
     const handleTyping = e => {
+        if (e.ctrlKey && e.keyCode === 13) {
+            sendMessage();
+        }
+
         if (msg) {
             typingRef.child(channel.id).child(user.uid).set(user.displayName);
         } else {
@@ -131,7 +134,7 @@ const MessagesForm = ({ currentChannel, currentUser, isPrivateChannel, getMessag
 
     const getPath = () => {
         if (isPrivateChannel) {
-            return `chat/private-${channel.id}`;
+            return `chat/private/${channel.id}`;
         } else {
             return 'chat/public';
         }
@@ -223,11 +226,6 @@ const MessagesForm = ({ currentChannel, currentUser, isPrivateChannel, getMessag
                         <li>
                             <Tooltip content="Send Photo" direction="right">
                                 <FileModal uploadPhoto={uploadPhoto} />
-                            </Tooltip>
-                        </li>
-                        <li>
-                            <Tooltip content="Send Location" direction="right">
-                                <FontAwesomeIcon icon={faLocationArrow} />
                             </Tooltip>
                         </li>
                     </ul>

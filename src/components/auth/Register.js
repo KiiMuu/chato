@@ -27,11 +27,11 @@ const Register = () => {
         [e.target.name]: e.target.value 
     });
 
-    const isFormEmpty = (username, email, password, confirmPassword) => {
-        return !username.length || !email.length || !password.length || !confirmPassword.length;
+    const isFormEmpty = () => {
+        return (!username.length || !email.length || !password.length || !confirmPassword.length);
     }
 
-    const isPasswordValid = (password, confirmPassword) => {
+    const isPasswordValid = () => {
         if (password.length < 6 || confirmPassword.length < 6) {
             return false;
         } else if (password !== confirmPassword) {
@@ -45,16 +45,16 @@ const Register = () => {
         let errors = [];
         let error;
 
-        if (isFormEmpty(username, email, password, confirmPassword)) {
+        if (isFormEmpty()) {
             error = { message: 'Fill in all fields' };
 
-            setUser({ errors: errors.concat(error) });
+            setUser({ ...user, errors: errors.concat(error) });
 
             return false;
-        } else if (!isPasswordValid(password, confirmPassword)) {
+        } else if (!isPasswordValid()) {
             error = { message: 'Password is invalid' }
 
-            setUser({ errors: errors.concat(error) });
+            setUser({ ...user, errors: errors.concat(error) });
 
             return false;
         } else {
@@ -83,6 +83,7 @@ const Register = () => {
 
         if (isFormValid()) {
             setUser({
+                ...user,
                 errors: [],
                 loading: true
             });
@@ -102,6 +103,7 @@ const Register = () => {
                 })
                 .catch(err => {
                     setUser({
+                        ...user,
                         errors: errors.concat(err),
                         loading: false
                     });
@@ -109,6 +111,7 @@ const Register = () => {
             })
             .catch(err => {
                 setUser({
+                    ...user,
                     errors: errors.concat(err),
                     loading: false
                 });

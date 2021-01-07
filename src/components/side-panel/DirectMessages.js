@@ -4,6 +4,10 @@ import { setCurrentChannel, setPrivateChannel } from '../../actions';
 import firebase from '../../firebase';
 import styles from './SidePanel.module.scss';
 
+// icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDirections } from '@fortawesome/free-solid-svg-icons';
+
 class DirectMessages extends Component {
 
     state = {
@@ -127,7 +131,7 @@ class DirectMessages extends Component {
             <div className={styles.directMessages}>
                 <div className={styles.usersLength}>
                     <span>
-                        Direct Message ({users?.length})
+                        <FontAwesomeIcon icon={faDirections} className={styles.directIcon} /> Direct Message ({users?.length})
                     </span>
                 </div>
                 {users?.length > 0 && <ul className={styles.usersList}>{this.displayUsers(users)}</ul>}

@@ -4,6 +4,10 @@ import firebase from '../../firebase';
 import { setCurrentChannel, setPrivateChannel } from '../../actions';
 import styles from './SidePanel.module.scss';
 
+// icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+
 const StarredChannels = ({ setCurrentChannel, setPrivateChannel, currentUser }) => {
 
     const [starredChannels, setStarredChannels] = useState([]);
@@ -68,16 +72,13 @@ const StarredChannels = ({ setCurrentChannel, setPrivateChannel, currentUser }) 
                 className={starredCh.id === activeChannel ? styles.activeChannel : ''}
             >{starredCh.name}</li>
         ))
-    );
-
-    console.log(starredChannels.length);
-    console.log(starredChannels);
+    )
 
     return (
         <div className={styles.starredChannels}>
             <div className={styles.starredLength}>
                 <span>
-                    Starred ({starredChannels.length})
+                    <FontAwesomeIcon icon={faStar} className={styles.starIcon} /> Starred ({starredChannels.length})
                 </span>
             </div>
             {starredChannels?.length > 0 && <ul className={styles.starredList}>{displayStarredChannels(starredChannels)}</ul>}

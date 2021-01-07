@@ -39,6 +39,7 @@ const Login = () => {
 
         if (isFormValid(email, password)) {
             setUser({
+                ...user,
                 errors: [],
                 loading: true
             });
@@ -51,6 +52,7 @@ const Login = () => {
             })
             .catch(err => {
                 setUser({
+                    ...user,
                     errors: errors.concat(err),
                     loading: false
                 });
