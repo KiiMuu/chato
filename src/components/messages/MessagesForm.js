@@ -6,15 +6,19 @@ import { useDetectOutsideClicks } from '../../hooks/useDetectOutsideClicks';
 import Tooltip from '../layout/tooltip/Tooltip';
 import FileModal from './FileModal';
 import ProgressBar from './ProgressBar';
+import { Picker, emojiIndex } from 'emoji-mart';
+import 'emoji-mart/css/emoji-mart.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faArrowRight, 
     faPaperclip, 
-    faLocationArrow 
+    faLocationArrow, 
+    faLaughBeam,
+    faTimes
 } from '@fortawesome/free-solid-svg-icons';
 
-const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChannel, getMessagesRef }) => {
+const MessagesForm = ({ currentChannel, currentUser, isPrivateChannel, getMessagesRef }) => {
 
     // options
     const optionsRef = useRef(null);
@@ -23,6 +27,7 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
     const toggleOptions = () => setIsOpenOptions(!isOpenOptions);
 
     // messages
+    let msgInRef = useRef(null);
     const [values, setValues] = useState({
         msg: '',
         channel: currentChannel,
@@ -30,10 +35,11 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
         uploadState: '',
         percentUploaded: 0,
         storageRef: firebase.storage().ref(),
-        errors: []
+        errors: [],
+        emojiPicker: false,
     });
 
-    const { msg, channel, user, uploadState, percentUploaded, storageRef, errors } = values;
+    const { msg, channel, user, uploadState, percentUploaded, storageRef, errors, emojiPicker } = values;
 
     const typingRef = firebase.database().ref('typing');
 
@@ -87,6 +93,41 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
             });
         }
     }
+
+    const handleEmojiPicker = () => {
+        setValues({
+            ...values,
+            emojiPicker: !emojiPicker
+        });
+    }
+
+    const handleAddEmoji = emoji => {
+        const oldMessage = msg;
+        const newMessage = colonToUnicode(` ${oldMessage}${emoji.colons} `);
+
+        setValues({ 
+            ...values,
+            msg: newMessage,
+            emojiPicker: false
+        });
+
+        setTimeout(() => msgInRef.current.focus(), 0);
+    }
+
+    const colonToUnicode = message => {
+        return message.replace(/:[A-Za-z0-9_+-]+:/g, x => {
+            x = x.replace(/:/g, "");
+            let emoji = emojiIndex.emojis[x];
+            if (typeof emoji !== "undefined") {
+                let unicode = emoji.native;
+                if (typeof unicode !== "undefined") {
+                    return unicode;
+                }
+            }
+            x = ":" + x + ":";
+            return x;
+        });
+    };
 
     const getPath = () => {
         if (isPrivateChannel) {
@@ -155,12 +196,26 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
 
     return (
         <form className={styles.messagesForm}>
+            <div className={styles.emojiPicker}>
+                {emojiPicker && (
+                    <Picker
+                        set="apple"
+                        title="Pick an emoji"
+                        emoji="point_up"
+                        onSelect={handleAddEmoji}
+                    />
+                )}
+            </div>
             <ProgressBar
                 uploadState={uploadState}
                 percentUploaded={percentUploaded}
             />
-            <span className={styles.moreOptionsButton} onClick={toggleOptions}>
-                <FontAwesomeIcon icon={faPaperclip} />
+            <span className={styles.moreOptionsButton}>
+                <FontAwesomeIcon 
+                    icon={faPaperclip} 
+                    onClick={toggleOptions} 
+                    className={styles.faPaperclipIcon}
+                />
                 <div 
                     ref={optionsRef}
                     className={`${styles.optionsContent} ${isOpenOptions ? styles.openOptions : ''}`}>
@@ -177,6 +232,9 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
                         </li>
                     </ul>
                 </div>
+                <span className={styles.emoji} onClick={handleEmojiPicker}>
+                    <FontAwesomeIcon icon={emojiPicker ? faTimes : faLaughBeam} />
+                </span>
             </span>
             <input
                 type="text"
@@ -186,6 +244,7 @@ const MessagesForm = ({ messagesRef, currentChannel, currentUser, isPrivateChann
                 autoComplete="off"
                 onChange={handleChange}
                 onKeyDown={handleTyping}
+                ref={msgInRef}
             />
             <button className={styles.sendButton} onClick={sendMessage}>
                 <FontAwesomeIcon icon={faArrowRight} />

@@ -69,6 +69,7 @@
 
 // Messages.js
 .messages {
+    position: relative;
     height: calc(100vh - 12rem);
     min-height: 100%;
     overflow-y: scroll;
@@ -103,16 +104,22 @@
         position: relative;
         display: inline-block;
         text-align: center;
-        width: 7%;
+        width: 12%;
         border-radius: 0;
         cursor: pointer;
+        .faPaperclipIcon {
+            margin-right: 2rem;
+            color: rgba($color-grey-light, .7);
+            &:hover {
+                color: $color-grey-light;
+            }
+        }
         .optionsContent {
             position: absolute;
             top: -12rem;
             left: 0;
             width: 100%;
             opacity: 0;
-            // background: rgba($color-white, .1);
             transform: translateY(5rem);
             transition: all .2s ease-in-out;
             ul {
@@ -133,9 +140,16 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .emoji {
+            cursor: pointer;
+            color: rgba($color-grey-light, .7);
+            &:hover {
+                color: $color-grey-light;
+            }
+        }
     }
     input {
-        width: 93%;
+        width: 88%;
         height: 100%;
         border: none;
         outline: none;
@@ -163,6 +177,12 @@
             right: 1rem;
         }
     }
+}
+
+.emojiPicker {
+    position: absolute;
+    bottom: 100%;
+    left: 5%;
 }
 
 // Message.js

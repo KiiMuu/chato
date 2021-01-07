@@ -284,6 +284,7 @@ class Messages extends Component {
                     currentUser={user}
                     isPrivateChannel={privateChannel}
                     getMessagesRef={this.getMessagesRef}
+                    handleEmojiPicker={this.handleEmojiPicker}
                 />
             </div>
         )
