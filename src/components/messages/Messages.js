@@ -154,6 +154,16 @@ class Messages extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (this.messagesAutoScroll) {
+            this.scrollToBottom();
+        }
+    }
+
+    scrollToBottom = () => {
+        this.messagesAutoScroll.scrollIntoView({ behavior: 'smooth' });
+    }
+
     displayMessages = messages => {
         const { user } = this.state;
 
@@ -230,21 +240,18 @@ class Messages extends Component {
     }
 
     messagesAndResults = () => {
-        const { messages, searchTerm, searchResults, searchLoading, messagesLoading } = this.state;
+
+        const { messages, searchTerm, searchResults, messagesLoading, searchLoading } = this.state;
 
         if (searchTerm) {
             if (searchLoading) {
-                return <span className={styles.loadingMessages}>Loading results...</span>;
-            } else if (searchResults.length === 0) {
-                return <span className={styles.loadingMessages}>No results found</span>;
+                return <span className={styles.loadingMessages}>Loading...</span>
             } else {
                 return this.displayMessages(searchResults)
             }
         } else {
             if (messagesLoading) {
-                return <span className={styles.loadingMessages}>Loading messages...</span>;
-            } else if (messages.length === 0) {
-                return <span className={styles.loadingMessages}>No messages</span>;
+                return <span className={styles.loadingMessages}>Loading...</span>;
             } else {
                 return this.displayMessages(messages);
             }
@@ -277,6 +284,7 @@ class Messages extends Component {
                 <div className={styles.messages}>
                     {this.messagesAndResults()}
                     {this.showTypingUsers(typingUsers)}
+                    <div ref={node => (this.messagesAutoScroll = node)}></div>
                 </div>
                 <MessagesForm 
                     messagesRef={this.messagesRef} 
